@@ -4,6 +4,8 @@ require "tilt/erubis"
 require "yaml"
 require 'time'
 
+TYPE_TO_INDEX = { "glucose" => 0, "carbs" => 1, "insulin" => 2 }
+
 configure do
   enable :sessions
   set :session_secret, 'secret'
@@ -19,45 +21,34 @@ helpers do
   end
 
   def parse_date_time_value(entry)
-    date, time = entry.split(/_[a|p]m_/)
-    month, day, year = date.split("_")
-    hour, mins = time.split("_")
-    if entry.include?("pm")
-      hour = (hour.to_i + 12).to_s
-    end
-    Time.new(year, month, day, hour, mins).iso8601[0..-7]
+    month, day, year, meridian, hours, mins = parse_entry_url(entry)
+    hours = (hours.to_i + 12).to_s if meridian == "pm"
+    Time.new(year, month, day, hours, mins).iso8601[0..-7]
   end
 
   def parse_value(entry, type)
     item = parse_entry_url(entry)
-    index = case type
-      when "glucose"
-        0
-      when "carbs"
-        1
-      when "insulin"
-        2
-      end
+    index = TYPE_TO_INDEX[type]
     username_data(session[:username])["data"][item][index]
   end
+end
+
+def meridian_based_on_24_hours(hour)
+  hour.to_i >= 12 ? "pm" : "am"
 end
 
 def parse_date_time(date_time)
   date, time = date_time.split("T")
   year, month, day = date.split("-")
   hour, mins = time.split(":")
-  meridian = hour.to_i >= 12 ? "pm" : "am"
+  meridian = meridian_based_on_24_hours(hour)
   hour = hour.to_i % 12 unless hour.to_i == 12
   [month.to_i, day.to_i, year.to_i, meridian, hour.to_i, mins.to_i]
 end
 
 def parse_entry_url(url)
   url.split("_").map do |time|
-    if time == "am" || time == "pm"
-      time
-    else
-      time.to_i
-    end
+    time == "am" || time == "pm" ? time : time.to_i
   end
 end
 
@@ -70,20 +61,16 @@ def signed_in?
 end
 
 def redirect_if_not_signed_in
-  if !signed_in?
-    session[:message] = "You must be signed in to proceed."
-    redirect "/"
-  end
+  return if signed_in?
+
+  session[:message] = "You must be signed in to proceed."
+  redirect "/"
 end
 
 def create_new_data(current_data, data_keys, date_time, new_entry)
   new_data = {}
   data_keys.each do |key|
-    if key == date_time
-      new_data[key] = new_entry
-    else
-      new_data[key] = current_data[key]
-    end
+    new_data[key] = key == date_time ? new_entry : current_data[key]
   end
 
   new_data
@@ -167,7 +154,8 @@ get "/users/new" do
 end
 
 post "/users/new" do
-  if params[:first_password] != params[:second_password] || params[:first_password].empty?
+  if params[:first_password] != params[:second_password] ||
+     params[:first_password].empty?
     session[:message] = "Error: Passwords didn't match - try again!"
     erb :new_user
   elsif username_data(params[:email]) || params[:email].empty?
@@ -175,8 +163,7 @@ post "/users/new" do
     erb :new_user
   else
     new_data = { "password" => params[:first_password],
-                  "data" => {}
-                }
+                 "data" => {} }
     yaml_data = load_yaml_data
     yaml_data[params[:email].strip] = new_data
     File.open('database.yml', 'w') { |f| f.write yaml_data.to_yaml }
