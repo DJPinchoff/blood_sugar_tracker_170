@@ -28,19 +28,17 @@ helpers do
     Time.new(year, month, day, hour, mins).iso8601[0..-7]
   end
 
-  def parse_glucose_value(entry)
+  def parse_value(entry, type)
     item = parse_entry_url(entry)
-    username_data(session[:username])["data"][item][0]
-  end
-
-  def parse_carbs_value(entry)
-    item = parse_entry_url(entry)
-    username_data(session[:username])["data"][item][1]
-  end
-
-  def parse_insulin_value(entry)
-    item = parse_entry_url(entry)
-    username_data(session[:username])["data"][item][2]
+    index = case type
+      when "glucose"
+        0
+      when "carbs"
+        1
+      when "insulin"
+        2
+      end
+    username_data(session[:username])["data"][item][index]
   end
 end
 
