@@ -1,9 +1,8 @@
 require "sinatra"
-require "sinatra/reloader"
+require "sinatra/reloader" if development?
 require "tilt/erubis"
 require "yaml"
 require 'time'
-require 'pry'
 
 configure do
   enable :sessions
@@ -23,7 +22,7 @@ helpers do
     date, time = entry.split(/_[a|p]m_/)
     month, day, year = date.split("_")
     hour, mins = time.split("_")
-    if entry.match?("pm")
+    if entry.include?("pm")
       hour = (hour.to_i + 12).to_s
     end
     Time.new(year, month, day, hour, mins).iso8601[0..-7]
