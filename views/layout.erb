@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title>Welcome to BST</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/bst.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Welcome to</h1>
+      <h1>Diabetic Blood Sugar Tracker</h1>
+      <% if session[:message] %>
+        <p class="message"><%= session.delete(:message) %></p>
+      <% end %>
+    </header>
+    <main>
+      <%= yield %>
+    </main>
+  </body>
+</html>

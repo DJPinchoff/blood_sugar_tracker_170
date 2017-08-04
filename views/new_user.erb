@@ -1,0 +1,13 @@
+<form method="get" action="/">
+  <input type="submit" value="Home Screen"/>
+</form>
+<br>
+<form method="post" action"/users/new">
+  User Email:
+    <input type="email" name="email" value="<%= params[:username] || "" %>"><br>
+  Create Password:
+    <input type="password" name="first_password"><br>
+  Verify Password:
+    <input type="password" name="second_password"><br>
+    <input type="submit"  value="Sign Up">
+</form>

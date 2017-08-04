@@ -1,0 +1,21 @@
+<p>What would you like to do?</p>
+<table>
+  <tr>
+    <th><a href="/data/view">View Entries</a></th>
+    <th><a href="/data/new">New Entry</a></th>
+    <th><a href="/data/delete">Delete Entry</a></th>
+  </tr>
+</table>
+<br><br>
+<% if session[:username] %>
+  <form class="inline" method="post" action="/users/signout">
+    <input type="submit" value="Sign Out"/>
+  </form>
+<% else %>
+  <form class="inline" method="get" action="/users/signin">
+    <input type="submit" value="Sign In"/>
+  </form>
+<% end %>
+<form class="inline" method="get" action="/users/new">
+  <input type="submit" value="Sign Up">
+</form>

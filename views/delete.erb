@@ -1,0 +1,28 @@
+<form method="get" action="/">
+  <input type="submit" value="Home Screen"/>
+</form>
+
+<table>
+  <tr>
+    <th>Delete?</th>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Glucose</th>
+    <th>Carbs</th>
+    <th>Insulin</th>
+  </tr>
+  <% username_data(session[:username])["data"].each do |time, data| %>
+  <tr>
+    <td>
+      <form method="post" action="/<%= "#{time[0]}_#{time[1]}_#{time[2]}_#{time[3]}_#{time[4]}_#{time[5]}" %>/delete">
+        <input type="submit" value="Delete">
+      </form>
+    </td>
+    <td><%= time[0] %>/<%= time[1] %>/<%= time[2] %></td>
+    <td><%= time[4] %>:<%= format('%02d', time[5])  %> <%= time[3] %></td>
+    <td><%= data[0] %></td>
+    <td><%= data[1] %></td>
+    <td><%= data[2] %></td>
+  </tr>
+  <% end %>
+</table>

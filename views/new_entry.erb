@@ -1,0 +1,28 @@
+<form method="get" action="/">
+  <input type="submit" value="Home Screen"/>
+</form>
+
+<form method="post" action="/data/new">
+  <table>
+    <tr>
+      <td>Date and Time</td>
+      <td><input type="datetime-local" value="<%= Time.now.iso8601[0..-7] %>" name="datetime"></td>
+    </tr>
+    <tr>
+      <td>Glucose</td>
+      <td><input type="number" value="100" name="glucose" min="20" max="500"></td>
+    </tr>
+    <tr>
+      <td>Carbs</td>
+      <td><input type="number" name="carbs" value="0" min="0" max="100"></td>
+    </tr>
+    <tr>
+      <td>Insulin</td>
+      <td><input type="number" name="insulin" value="0" min="0" max="100"></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><input type="submit" value="Submit"></td>
+    </tr>
+  </table>
+</form>

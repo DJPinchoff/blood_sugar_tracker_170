@@ -1,0 +1,28 @@
+<form method="get" action="/">
+  <input type="submit" value="Home Screen"/>
+</form>
+
+<form method="post" action="/<%= @entry %>/edit">
+  <table>
+    <tr>
+      <td>Date and Time</td>
+      <td><input type="datetime-local" name="datetime" value="<%= parse_date_time_value(@entry) %>"></td>
+    </tr>
+    <tr>
+      <td>Glucose</td>
+      <td><input type="number" value="<%= parse_glucose_value(@entry) %>" name="glucose" min="20" max="500"></td>
+    </tr>
+    <tr>
+      <td>Carbs</td>
+      <td><input type="number" value="<%= parse_carbs_value(@entry) %>" name="carbs" min="0" max="100"></td>
+    </tr>
+    <tr>
+      <td>Insulin</td>
+      <td><input type="number" value="<%= parse_insulin_value(@entry) %>" name="insulin" min="0" max="100"></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><input type="submit" value="Submit"></td>
+    </tr>
+  </table>
+</form>
