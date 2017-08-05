@@ -43,6 +43,7 @@ def parse_date_time(date_time)
   hour, mins = time.split(":")
   meridian = meridian_based_on_24_hours(hour)
   hour = hour.to_i % 12 unless hour.to_i == 12
+  hour = hour + 12 if hour == 0
   [month.to_i, day.to_i, year.to_i, meridian, hour.to_i, mins.to_i]
 end
 
